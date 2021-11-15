@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import io.github.cisumer.wcfbin4j.records.Text;
 import io.github.cisumer.wcfbin4j.util.ByteArrayUtil;
 
 /**
@@ -13,7 +12,7 @@ import io.github.cisumer.wcfbin4j.util.ByteArrayUtil;
  * @author github.com/cisumer
  *
  */
-public class Chars16Text extends Text<String> {
+public class Chars16Text extends Chars8Text{
 
 	@Override
 	public int getType() {

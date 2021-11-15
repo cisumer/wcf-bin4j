@@ -10,13 +10,14 @@ import org.apache.commons.lang3.StringUtils;
 
 import io.github.cisumer.wcfbin4j.Node;
 import io.github.cisumer.wcfbin4j.NodeFactory;
+import io.github.cisumer.wcfbin4j.records.elements.EndElement;
+import io.github.cisumer.wcfbin4j.records.texts.TextWithEndElement;
 /**
  * 元素基类，提供子节点和属性的基本实现
  * @author github.com/cisumer
  *
  */
 public abstract class Element implements Node{
-	protected int type;
 	protected String prefix;
 	protected String name;
 	protected List<Node> childs=new ArrayList<Node>();
@@ -26,31 +27,24 @@ public abstract class Element implements Node{
 	public void parse(InputStream is) throws IOException{
 		prefix=parsePrefix(is);
 		name=parseName(is);
-		type=is.read();
-		while(type!=0x01){
+		int type=is.read();
+		Node child=NodeFactory.getNode(type);
+		System.out.println(type+" : "+child);
+		while(!EndElement.class.equals(child.getClass())){
 		    try{
-				if(type>=0x03&&type<0x40){//attribute
-					Node attr=NodeFactory.getNode(type);
-					attr.parse(is);
-					attributes.add(attr);
+				child.parse(is);
+				if(Attribute.class.isAssignableFrom(child.getClass())){//attribute
+					attributes.add(child);
 				}else{//ELEMENT or TEXT
-					Node child=null;
-					if(NodeFactory.hasType(type)){
-						child=NodeFactory.getNode(type);
-						childs.add(child);
-						child.parse(is);
-					}else{
-						child=NodeFactory.getNode(type-1);
-						childs.add(child);
-						child.parse(is);
+					childs.add(child);
+					//结束的文本节点
+					if(TextWithEndElement.class.isAssignableFrom(child.getClass()))
 						break;
-					}
 				}
-		    }catch(NullPointerException e){
-				System.err.println(type);
-				throw new RuntimeException(type+"没有找到");
+		    }catch(Exception e){
+				throw new RuntimeException("类型："+Integer.toHexString(child.getType())+"没有找到！");
 		    }
-			type=is.read();
+			child=NodeFactory.getNode(is.read());
 		}
 	}
 	/**
@@ -109,34 +103,52 @@ public abstract class Element implements Node{
 	}
 	@Override
 	public String toXML() {
-		return "\r\n<"+prefixXML()+name+getAttributeXml()+">"+getChildXml()+"</"+name+">";
+		return "\r\n<"+prefixXML()+name+getAttributeXml()+">"+getChildXml()+(childs!=null&&childs.size()>1?"\r\n":"")+"</"+name+">\r\n";
 	}
-	private String getAttributeXml(){
+	protected String getAttributeXml(){
 	    String attrs="";
 	    for(Node attr :attributes){
-		attrs+=" "+attr.toXML();
+	    	attrs+=" "+attr.toXML();
 	    }
 	    return attrs;
 	}
-	private String getChildXml(){
-	    String c="";
+	protected String getChildXml(){
+	    StringBuffer c=new StringBuffer();
 	    for(Node n :childs){
-	    	c+=n.toXML();
+	    	c.append(n.toXML());
 	    }
-	    if(childs.get(childs.size()-1) instanceof Element)
-		    c+="\r\n";
-	    return c;
+	    return c.toString();
 	}
 	
 	public void setText(Text<?> text){
 		childs.clear();
 		childs.add(text);
-	}	
-	public void addChild(Node node){
-		childs.add(node);
 	}
-	public void addAttribute(Attribute<?> attr){
+	public Element addChild(Node node){
+		childs.add(node);
+		return this;
+	}
+	/**
+	 * 复制元素的子节点
+	 * @param node
+	 * @return
+	 */
+	public Element copyChilds(Element node){
+		childs.addAll(node.childs);
+		return this;
+	}
+	public Element addAttribute(Attribute<?> attr){
 		attributes.add(attr);
+		return this;
+	}
+	/**
+	 * 复制元素的属性
+	 * @param node
+	 * @return
+	 */
+	public Element copyAttributes(Element node){
+		attributes.addAll(node.attributes);
+		return this;
 	}
 	public List<Node> getChilds() {
 		return childs;
@@ -147,7 +159,16 @@ public abstract class Element implements Node{
 	public String getName(){
 		return name;
 	}
-	public void setName(String name){
+	public Element setName(String name){
 	    this.name=name;
+	    return this;
 	}
+	public String getPrefix() {
+		return prefix;
+	}
+	public Element setPrefix(String prefix) {
+		this.prefix = prefix;
+		return this;
+	}
+	
 }

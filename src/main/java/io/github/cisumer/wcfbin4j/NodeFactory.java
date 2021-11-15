@@ -4,8 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import io.github.cisumer.wcfbin4j.records.CommentNode;
 import io.github.cisumer.wcfbin4j.records.PrefixCodeNode;
+import io.github.cisumer.wcfbin4j.records.Text;
 import io.github.cisumer.wcfbin4j.records.attributes.DictionaryTextValueAttribute;
 import io.github.cisumer.wcfbin4j.records.attributes.NamedTextValueAttribute;
 import io.github.cisumer.wcfbin4j.records.attributes.NamedXmlnsDictionaryValueAttribute;
@@ -16,6 +16,9 @@ import io.github.cisumer.wcfbin4j.records.attributes.PrefixNamedTextValueAttribu
 import io.github.cisumer.wcfbin4j.records.attributes.PrefixXmlnsNamedDictionaryValueAttribute;
 import io.github.cisumer.wcfbin4j.records.attributes.PrefixXmlnsNamedStringValueAttribute;
 import io.github.cisumer.wcfbin4j.records.attributes.XmlnsStringValueAttribute;
+import io.github.cisumer.wcfbin4j.records.elements.ArrayElement;
+import io.github.cisumer.wcfbin4j.records.elements.CommentElement;
+import io.github.cisumer.wcfbin4j.records.elements.EndElement;
 import io.github.cisumer.wcfbin4j.records.elements.NamedDictionaryElement;
 import io.github.cisumer.wcfbin4j.records.elements.NamedElement;
 import io.github.cisumer.wcfbin4j.records.elements.PrefixCodeDictionaryElement;
@@ -42,6 +45,7 @@ import io.github.cisumer.wcfbin4j.records.texts.Int64Text;
 import io.github.cisumer.wcfbin4j.records.texts.Int8Text;
 import io.github.cisumer.wcfbin4j.records.texts.OneText;
 import io.github.cisumer.wcfbin4j.records.texts.QNameDictionaryText;
+import io.github.cisumer.wcfbin4j.records.texts.TextWithEndElement;
 import io.github.cisumer.wcfbin4j.records.texts.TimeSpanText;
 import io.github.cisumer.wcfbin4j.records.texts.TrueText;
 import io.github.cisumer.wcfbin4j.records.texts.UInt64Text;
@@ -59,9 +63,10 @@ import io.github.cisumer.wcfbin4j.records.texts.ZeroText;
 public class NodeFactory {
     @SuppressWarnings("unchecked")
     private final static Class<? extends Node>[] nodes = new Class[256];
-    static {
-    	nodes[0x02] = CommentNode.class;
-    	
+    static {    	
+    	nodes[0x01] = EndElement.class;//结束    	
+    	nodes[0x02] = CommentElement.class;//注释    	
+    	nodes[0x03] = ArrayElement.class;//数组元素
 		// 属性
     	nodes[0x04] = NamedTextValueAttribute.class;
     	nodes[0x05] = PrefixNamedTextValueAttribute.class;
@@ -133,19 +138,36 @@ public class NodeFactory {
      */
     public static Node getNode(int type) {
 		try {
-		    Node node = nodes[type].newInstance();
-		    if ((type >= 0x5e && type <= 0x77) ||
-		    	(type >= 0x44 && type <= 0x5D) ||
-		    	(type >= 0x0C && type <= 0x25) ||
-		    	(type >= 0x26 && type <= 0x3F)) {
-			 ((PrefixCodeNode)node).setType((char)type);
-		    }
-		    return node;
+			if(hasType(type)){
+			    Node node = nodes[type].newInstance();
+			    if ((type >= 0x5e && type <= 0x77) ||
+			    	(type >= 0x44 && type <= 0x5D) ||
+			    	(type >= 0x0C && type <= 0x25) ||
+			    	(type >= 0x26 && type <= 0x3F)) {
+				 ((PrefixCodeNode)node).setType((char)type);
+			    }
+			    return node;
+			}else{
+				TextWithEndElement endText=new TextWithEndElement();
+				endText.setType(type);
+				return endText;
+			}
 		} catch (Exception e) {
 		    return null;
 		}
-    }	
-	
+    }
+	/**
+	 * 如果没有的节点，则使用type-1获取,此时获取的节点必为Text类型
+	 * @param type
+	 * @return
+	 */
+	public static Text<?> getText(int type){
+		if (type >= 0x80 && type%2==0){
+			Text<?> text=(Text<?>) getNode(type);
+			return text;
+		}
+		return null;
+	}
     public static boolean isEnd(int type) {
     	return type==0x01;
     }
@@ -163,7 +185,6 @@ public class NodeFactory {
     public static Node parse(final InputStream is){
     	try{
 			int type = is.read();
-			System.out.println(type);
 			Node record = getNode(type);
 			record.parse(is);
 			return record;

@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.apache.commons.text.StringEscapeUtils;
+
 import io.github.cisumer.wcfbin4j.records.Text;
 
 /**
@@ -28,5 +30,10 @@ public class Chars8Text extends Text<String> {
 	public void renderContent(OutputStream os) throws Exception {
 		lenStringBytes(value, os);
 	}
-
+	/**
+	 * 此处需要对xml元素进行转义
+	 */
+	public String toXML(){
+		return StringEscapeUtils.escapeXml10(value);
+	}
 }

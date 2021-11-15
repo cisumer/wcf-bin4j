@@ -15,7 +15,9 @@ import io.github.cisumer.wcfbin4j.records.Text;
 public abstract class TextValueAttribute extends Attribute<Text<?>>{
 
 	public Text<?> parseValue(InputStream in)throws IOException {
-		return (Text<?>) NodeFactory.getNode(in.read());
+		Text<?> text= (Text<?>) NodeFactory.getNode(in.read());
+		text.parse(in);
+		return text;
 	}
 	
 	public String toValueXML(){

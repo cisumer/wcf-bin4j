@@ -1,7 +1,5 @@
 package io.github.cisumer.wcfbin4j.records;
 
-import java.io.OutputStream;
-
 import io.github.cisumer.wcfbin4j.Node;
 /**
  * 文本节点
@@ -15,16 +13,12 @@ public abstract class Text<T> implements Node {
 		return value;
 	}
 	
-	public void setValue(T value){
+	public Text<T> setValue(T value){
 		this.value=value;
+		return this;
 	}
 	
 	public String toXML(){
 	    return value.toString();
-	}
-	
-	public void toBytes(OutputStream os)throws Exception{
-	    os.write(getType()-1);
-	    renderContent(os);
 	}
 }

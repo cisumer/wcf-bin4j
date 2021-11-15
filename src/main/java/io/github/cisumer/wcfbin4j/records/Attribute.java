@@ -65,14 +65,16 @@ public abstract class Attribute<T> implements Node{
 	public String getPrefix() {
 		return prefix;
 	}
-	public void setPrefix(String prefix) {
+	public Attribute<T> setPrefix(String prefix) {
 		this.prefix = prefix;
+		return this;
 	}
 	public String getName() {
 		return name;
 	}
-	public void setName(String name) {
+	public Attribute<T> setName(String name) {
 		this.name = name;
+		return this;
 	}
 	public T getValue() {
 		return value;

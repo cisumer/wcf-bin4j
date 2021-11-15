@@ -8,7 +8,7 @@ import io.github.cisumer.wcfbin4j.records.Element;
 
 /**
  * 简单元素<br/> 
- * [0x40][len][name] eg: @0x04test >> &lt;test&gt;
+ * [0x40][len][name] eg: @0x04test >> &lt;test&gt&lt;/test&gt;
  * @author github.com/cisumer
  *
  */

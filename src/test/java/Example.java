@@ -15,7 +15,7 @@ public class Example {
 	
 	public static void main(String[] args) throws Exception {
 		File file=new File("test.bin");
-		System.out.println(file.getPath());
+		System.out.println(file.getName());
 		Node root=NodeFactory.parse(FileUtils.openInputStream(file));
 		System.out.println(root.toXML());
 	}
