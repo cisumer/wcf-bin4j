@@ -16,3 +16,4 @@
 ```
 4. 后续将增加简单的xml转换API
 5. 本项目仅用于解析application/msbin1，请勿用于非法用途。
+6. github不稳定，主要在gitee维护本项目
