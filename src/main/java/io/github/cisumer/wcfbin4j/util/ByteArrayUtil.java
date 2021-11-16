@@ -90,6 +90,9 @@ public class ByteArrayUtil {
 		}
 		return bytes;
     }
+    public static final byte[] hexStringToByteArray(String s,String siff){
+    	return hexStringToByteArray(s.replaceAll(siff, ""));
+    }
 
     /**
      * 字节数组转为16进制表示的字符串
@@ -227,13 +230,20 @@ public class ByteArrayUtil {
 			    .add(BigInteger.valueOf(1));
     }
 
+    /**
+     * 不固定长度的int，最多4字节。
+     * 
+     * @param is
+     * @return
+     * @throws IOException
+     */
     public static int getMultiByteInt31(InputStream is)throws IOException{
 		int value=0;
 		for(int i=0;i<4;i++){
 		    int b=is.read();
 		    value |= (b & 0x7F) << 7*i;
-		    if((b & 0x80) == 0)
-			break;
+		    if((b & 0x80) == 0)//小于128即结束
+		    	break;
 		}
 		return value;
     }
@@ -245,7 +255,8 @@ public class ByteArrayUtil {
 		int value_d = (value >> 21) & 0x7F;
 		int value_e = (value >> 28) & 0x03;
 		if(value_e != 0)
-		     return new byte[]{(byte)(value_a | 0x80),
+		     return new byte[]{
+		    (byte) (value_a | 0x80),
 			(byte) (value_b | 0x80),
 			(byte) (value_c | 0x80),
 			(byte) (value_d | 0x80),

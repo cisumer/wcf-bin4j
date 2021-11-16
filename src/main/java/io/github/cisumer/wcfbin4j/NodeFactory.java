@@ -4,57 +4,58 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import io.github.cisumer.wcfbin4j.records.PrefixCodeNode;
-import io.github.cisumer.wcfbin4j.records.Text;
-import io.github.cisumer.wcfbin4j.records.attributes.DictionaryTextValueAttribute;
-import io.github.cisumer.wcfbin4j.records.attributes.NamedTextValueAttribute;
-import io.github.cisumer.wcfbin4j.records.attributes.NamedXmlnsDictionaryValueAttribute;
-import io.github.cisumer.wcfbin4j.records.attributes.PrefixCodeDictionaryTextValueAttribute;
-import io.github.cisumer.wcfbin4j.records.attributes.PrefixCodeNamedTextValueAttribute;
-import io.github.cisumer.wcfbin4j.records.attributes.PrefixDictionaryTextValueAttribute;
-import io.github.cisumer.wcfbin4j.records.attributes.PrefixNamedTextValueAttribute;
-import io.github.cisumer.wcfbin4j.records.attributes.PrefixXmlnsNamedDictionaryValueAttribute;
-import io.github.cisumer.wcfbin4j.records.attributes.PrefixXmlnsNamedStringValueAttribute;
-import io.github.cisumer.wcfbin4j.records.attributes.XmlnsStringValueAttribute;
-import io.github.cisumer.wcfbin4j.records.elements.ArrayElement;
-import io.github.cisumer.wcfbin4j.records.elements.CommentElement;
-import io.github.cisumer.wcfbin4j.records.elements.EndElement;
-import io.github.cisumer.wcfbin4j.records.elements.NamedDictionaryElement;
-import io.github.cisumer.wcfbin4j.records.elements.NamedElement;
-import io.github.cisumer.wcfbin4j.records.elements.PrefixCodeDictionaryElement;
-import io.github.cisumer.wcfbin4j.records.elements.PrefixCodeNamedElement;
-import io.github.cisumer.wcfbin4j.records.elements.PrefixDictionaryElement;
-import io.github.cisumer.wcfbin4j.records.elements.PrefixNamedElement;
-import io.github.cisumer.wcfbin4j.records.texts.Base64Len16Text;
-import io.github.cisumer.wcfbin4j.records.texts.Base64Len32Text;
-import io.github.cisumer.wcfbin4j.records.texts.Base64Len8Text;
-import io.github.cisumer.wcfbin4j.records.texts.BoolText;
-import io.github.cisumer.wcfbin4j.records.texts.Chars16Text;
-import io.github.cisumer.wcfbin4j.records.texts.Chars32Text;
-import io.github.cisumer.wcfbin4j.records.texts.Chars8Text;
-import io.github.cisumer.wcfbin4j.records.texts.DateTimeText;
-import io.github.cisumer.wcfbin4j.records.texts.DecimalText;
-import io.github.cisumer.wcfbin4j.records.texts.DictionaryText;
-import io.github.cisumer.wcfbin4j.records.texts.DoubleText;
-import io.github.cisumer.wcfbin4j.records.texts.EmptyText;
-import io.github.cisumer.wcfbin4j.records.texts.FalseText;
-import io.github.cisumer.wcfbin4j.records.texts.FloatText;
-import io.github.cisumer.wcfbin4j.records.texts.Int16Text;
-import io.github.cisumer.wcfbin4j.records.texts.Int32Text;
-import io.github.cisumer.wcfbin4j.records.texts.Int64Text;
-import io.github.cisumer.wcfbin4j.records.texts.Int8Text;
-import io.github.cisumer.wcfbin4j.records.texts.OneText;
-import io.github.cisumer.wcfbin4j.records.texts.QNameDictionaryText;
-import io.github.cisumer.wcfbin4j.records.texts.TextWithEndElement;
-import io.github.cisumer.wcfbin4j.records.texts.TimeSpanText;
-import io.github.cisumer.wcfbin4j.records.texts.TrueText;
-import io.github.cisumer.wcfbin4j.records.texts.UInt64Text;
-import io.github.cisumer.wcfbin4j.records.texts.UUIDText;
-import io.github.cisumer.wcfbin4j.records.texts.UnicodeChars16Text;
-import io.github.cisumer.wcfbin4j.records.texts.UnicodeChars32Text;
-import io.github.cisumer.wcfbin4j.records.texts.UnicodeChars8Text;
-import io.github.cisumer.wcfbin4j.records.texts.UniqueIdText;
-import io.github.cisumer.wcfbin4j.records.texts.ZeroText;
+import io.github.cisumer.wcfbin4j.exception.NodeNotFoundException;
+import io.github.cisumer.wcfbin4j.nodes.PrefixCodeNode;
+import io.github.cisumer.wcfbin4j.nodes.Text;
+import io.github.cisumer.wcfbin4j.nodes.attributes.DictionaryTextValueAttribute;
+import io.github.cisumer.wcfbin4j.nodes.attributes.NamedTextValueAttribute;
+import io.github.cisumer.wcfbin4j.nodes.attributes.NamedXmlnsDictionaryValueAttribute;
+import io.github.cisumer.wcfbin4j.nodes.attributes.PrefixCodeDictionaryTextValueAttribute;
+import io.github.cisumer.wcfbin4j.nodes.attributes.PrefixCodeNamedTextValueAttribute;
+import io.github.cisumer.wcfbin4j.nodes.attributes.PrefixDictionaryTextValueAttribute;
+import io.github.cisumer.wcfbin4j.nodes.attributes.PrefixNamedTextValueAttribute;
+import io.github.cisumer.wcfbin4j.nodes.attributes.PrefixXmlnsNamedDictionaryValueAttribute;
+import io.github.cisumer.wcfbin4j.nodes.attributes.PrefixXmlnsNamedStringValueAttribute;
+import io.github.cisumer.wcfbin4j.nodes.attributes.XmlnsStringValueAttribute;
+import io.github.cisumer.wcfbin4j.nodes.elements.ArrayElement;
+import io.github.cisumer.wcfbin4j.nodes.elements.CommentElement;
+import io.github.cisumer.wcfbin4j.nodes.elements.EndElement;
+import io.github.cisumer.wcfbin4j.nodes.elements.NamedDictionaryElement;
+import io.github.cisumer.wcfbin4j.nodes.elements.NamedElement;
+import io.github.cisumer.wcfbin4j.nodes.elements.PrefixCodeDictionaryElement;
+import io.github.cisumer.wcfbin4j.nodes.elements.PrefixCodeNamedElement;
+import io.github.cisumer.wcfbin4j.nodes.elements.PrefixDictionaryElement;
+import io.github.cisumer.wcfbin4j.nodes.elements.PrefixNamedElement;
+import io.github.cisumer.wcfbin4j.nodes.elements.TextWithEndElement;
+import io.github.cisumer.wcfbin4j.nodes.texts.Base64Len16Text;
+import io.github.cisumer.wcfbin4j.nodes.texts.Base64Len32Text;
+import io.github.cisumer.wcfbin4j.nodes.texts.Base64Len8Text;
+import io.github.cisumer.wcfbin4j.nodes.texts.BigIntegerText;
+import io.github.cisumer.wcfbin4j.nodes.texts.BoolText;
+import io.github.cisumer.wcfbin4j.nodes.texts.ByteText;
+import io.github.cisumer.wcfbin4j.nodes.texts.Chars16Text;
+import io.github.cisumer.wcfbin4j.nodes.texts.Chars32Text;
+import io.github.cisumer.wcfbin4j.nodes.texts.Chars8Text;
+import io.github.cisumer.wcfbin4j.nodes.texts.DateTimeText;
+import io.github.cisumer.wcfbin4j.nodes.texts.DecimalText;
+import io.github.cisumer.wcfbin4j.nodes.texts.DictionaryText;
+import io.github.cisumer.wcfbin4j.nodes.texts.DoubleText;
+import io.github.cisumer.wcfbin4j.nodes.texts.EmptyText;
+import io.github.cisumer.wcfbin4j.nodes.texts.FalseText;
+import io.github.cisumer.wcfbin4j.nodes.texts.FloatText;
+import io.github.cisumer.wcfbin4j.nodes.texts.IntegerText;
+import io.github.cisumer.wcfbin4j.nodes.texts.LongText;
+import io.github.cisumer.wcfbin4j.nodes.texts.OneText;
+import io.github.cisumer.wcfbin4j.nodes.texts.QNameDictionaryText;
+import io.github.cisumer.wcfbin4j.nodes.texts.ShortText;
+import io.github.cisumer.wcfbin4j.nodes.texts.TimeSpanText;
+import io.github.cisumer.wcfbin4j.nodes.texts.TrueText;
+import io.github.cisumer.wcfbin4j.nodes.texts.UUIDText;
+import io.github.cisumer.wcfbin4j.nodes.texts.UnicodeChars16Text;
+import io.github.cisumer.wcfbin4j.nodes.texts.UnicodeChars32Text;
+import io.github.cisumer.wcfbin4j.nodes.texts.UnicodeChars8Text;
+import io.github.cisumer.wcfbin4j.nodes.texts.UniqueIdText;
+import io.github.cisumer.wcfbin4j.nodes.texts.ZeroText;
 /**
  * 解析wcfbin工厂类，定义协议类型
  * @author github.com/cisumer
@@ -64,7 +65,7 @@ public class NodeFactory {
     @SuppressWarnings("unchecked")
     private final static Class<? extends Node>[] nodes = new Class[256];
     static {    	
-    	nodes[0x01] = EndElement.class;//结束    	
+    	nodes[0x01] = EndElement.class;//结束
     	nodes[0x02] = CommentElement.class;//注释    	
     	nodes[0x03] = ArrayElement.class;//数组元素
 		// 属性
@@ -102,10 +103,10 @@ public class NodeFactory {
 		nodes[0x82] = OneText.class;//1
 		nodes[0x84] = FalseText.class;//false
 		nodes[0x86] = TrueText.class;//true
-		nodes[0x88] = Int8Text.class;//byte
-		nodes[0x8a] = Int16Text.class;//short
-		nodes[0x8c] = Int32Text.class;//int
-		nodes[0x8e] = Int64Text.class;//long
+		nodes[0x88] = ByteText.class;//byte
+		nodes[0x8a] = ShortText.class;//short
+		nodes[0x8c] = IntegerText.class;//int
+		nodes[0x8e] = LongText.class;//long
 		nodes[0x90] = FloatText.class;//float
 		nodes[0x92] = DoubleText.class;//double
 		nodes[0x94] = DecimalText.class;//BigDecimal
@@ -123,7 +124,7 @@ public class NodeFactory {
 		nodes[0xAC] = UniqueIdText.class;//
 		nodes[0xAE] = TimeSpanText.class;//
 		nodes[0xB0] = UUIDText.class;//
-		nodes[0xB2] = UInt64Text.class;//
+		nodes[0xB2] = BigIntegerText.class;//
 		nodes[0xB4] = BoolText.class;//
 		nodes[0xB6] = UnicodeChars8Text.class;//
 		nodes[0xB8] = UnicodeChars16Text.class;//
@@ -136,7 +137,7 @@ public class NodeFactory {
      * @param type
      * @return
      */
-    public static Node getNode(int type) {
+    public static Node createNode(int type) {
 		try {
 			if(hasType(type)){
 			    Node node = nodes[type].newInstance();
@@ -153,7 +154,7 @@ public class NodeFactory {
 				return endText;
 			}
 		} catch (Exception e) {
-		    return null;
+		    throw new NodeNotFoundException(type);
 		}
     }
 	/**
@@ -163,14 +164,11 @@ public class NodeFactory {
 	 */
 	public static Text<?> getText(int type){
 		if (type >= 0x80 && type%2==0){
-			Text<?> text=(Text<?>) getNode(type);
+			Text<?> text=(Text<?>) createNode(type);
 			return text;
 		}
 		return null;
 	}
-    public static boolean isEnd(int type) {
-    	return type==0x01;
-    }
 
     public static boolean hasType(int type) {
     	return nodes[type] != null;
@@ -179,19 +177,14 @@ public class NodeFactory {
     /**
      * 解析根节点，从流中读取第一个字节，就是根节点类型
      * @param is
-     * @return
+     * @return 根节点
      * @throws IOException
      */
-    public static Node parse(final InputStream is){
-    	try{
-			int type = is.read();
-			Node record = getNode(type);
-			record.parse(is);
-			return record;
-    	}catch(IOException e){
-    		System.out.println(e.getMessage());
-    		throw new RuntimeException(e);
-    	}
+    public static Node parse(final InputStream is) throws IOException{
+		int type = is.read();
+		Node record = createNode(type);
+		record.parse(is);
+		return record;
     }
 
     public static Node parse(byte[] bs) throws IOException {
